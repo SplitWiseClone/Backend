@@ -2,9 +2,9 @@
 
 {% block content %}
     {% block title %}<h1>Home</h1>{% endblock %}
+    <p>Welcome to WiseSplit 😂😂</p>
     {% if user.is_authenticated %}
         <h2 class="card-title">Hi {{ user.username }}!</h2>
-        <p>Welcome to WiseSplit 😂😂</p>
     {% else %}
         <p>You are not logged in</p>
         <a href="{% url 'login' %}">Log In<br/></a>

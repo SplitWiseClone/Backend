@@ -16,18 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, re_path, path
 from django.views.generic import TemplateView
+from rest_framework_simplejwt.views import (
+    TokenRefreshView,
+    TokenObtainPairView
+)
 
-import MoneyTransact.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')),
+    path('api/user/', include('accounts.urls')),
     path('accounts/', include("django.contrib.auth.urls")),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
-    # path('balance/', include('MoneyTransact.urls'), name='balance'),
-    path('addExpense/', MoneyTransact.views.addExpense, name='addExpense'),
-    path('listAllTransactions/', MoneyTransact.views.listAllTransactions, name='list_all_transactions'),
-    path('listAllTransactions/deleteTransaction/<int:transaction_id>', MoneyTransact.views.deleteTransaction, name='deleteTransaction'),
-    path('listAllTransactions/editTransaction/<int:transaction_id>', MoneyTransact.views.editTransaction, name='editTransaction'),
-    path('overAllBalance/', MoneyTransact.views.overAllBalance, name='over_all_balance'),
+    path('', include('MoneyTransact.urls')),
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
 ]
