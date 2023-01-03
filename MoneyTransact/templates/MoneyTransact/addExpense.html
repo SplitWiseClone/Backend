@@ -2,9 +2,15 @@
 
 {% block content %}
     {% block title %} <h1>Add Expense</h1>{% endblock %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Add Expense</button>
-    </form>
+    {% if user.is_authenticated %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Add Expense</button>
+        </form>
+    {% else %}
+     <h2> You are not logged in </h2>
+        <a href="{% url 'login' %}">Log In<br/></a>
+        <a href="{% url 'signup' %}">Register</a>
+    {% endif %}
 {% endblock %}

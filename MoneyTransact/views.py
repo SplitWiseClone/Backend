@@ -1,51 +1,43 @@
 from django.shortcuts import render
 
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
 from django.urls import reverse
-from django.views import generic
-from django.views.generic import View
 from .forms import TransactionForm
-
-# Create your views here.
-
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Transaction
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 
 
 def index(request):
     return HttpResponse("<h1> Your Balance sheet </h1> ")
 
 
-# @api_view(['POST'])
 def addExpense(request):
     print(request.user)
     if request.method == 'POST':
         form = TransactionForm(request.POST, request.FILES)
         # get the data from request from frontend
-
         if form.is_valid():
             # form.giver = request.user
-            print("form ", form.fields)
+            # print("form ", form.fields)
             transaction = form.save()
             # transaction.giver = request.user
             transaction.save()
             print("transaction ", transaction)
-            # return redirect('list_all_transactions')
+            return redirect('list_all_transactions')
     else:
         form = TransactionForm()
-        return HttpResponse("invalid request format")
     return render(request, '../templates/MoneyTransact/addExpense.html', {
         'form': form
     })
 
 
 def listAllTransactions(request):
+    if request.user.id is None:
+        return render(request, '../templates/MoneyTransact/listAllTransactions.html', {
+            'transactions': {}
+        })
     my_transactions = (Transaction.objects.filter(taker=str(request.user.id), active=True)
                        | Transaction.objects.filter(giver=str(request.user.id), active=True)).distinct()
-
     transactions_details = list()
     for transaction in my_transactions:
         print("transaction ", transaction)
@@ -81,15 +73,6 @@ def listAllTransactions(request):
     })
 
 
-def detail(request, transaction_id):
-    # print( transaction_id)
-    all_transactions = Transaction.objects.filter(taker=str(transaction_id)) \
-                       | Transaction.objects.filter(giver=str(transaction_id))
-    print(all_transactions)
-    return HttpResponse("<h2> Details for all transaction with this " + str(transaction_id) + " are :   </h2> ")
-    # + str(balance_id)+  " are  </h2> ")
-
-
 def deleteTransaction(request, transaction_id):
     # if request.method == 'POST':
     transaction = Transaction.objects.get(id=transaction_id)
@@ -115,6 +98,11 @@ def editTransaction(request, transaction_id):
 
 
 def overAllBalance(request):
+    if request.user.id is None:
+        return render(request, '../templates/MoneyTransact/overAllBalance.html', {
+            'borrowed_from': {},
+            'lent_to': {}
+        })
     borrowed_from = dict()
     lent_to = dict()
     borrowed_transactions = (Transaction.objects.filter(taker=str(request.user.id), active=True)).distinct()

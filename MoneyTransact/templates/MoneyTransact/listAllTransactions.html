@@ -7,7 +7,6 @@
         {% for transaction in transactions %}
             <div class="card">
                 <div class="card-body">
-{#                    <p class="card-text">{{transaction.giver}} </p>#}
                     {% if transaction.giver == user.username %}
                         <p class="card-text">Transaction ID: {{ transaction.id }}</p>
                         <p class="card-text">Description: {{ transaction.description }}</p>
