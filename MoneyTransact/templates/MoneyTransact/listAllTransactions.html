@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load mathfilters %}
+
+{% block content %}
+    {% block title %} <h2> Your Transactions </h2> {% endblock %}
+    {%  if user.is_authenticated %}
+        {% for transaction in transactions %}
+            <div class="card">
+                <div class="card-body">
+{#                    <p class="card-text">{{transaction.giver}} </p>#}
+                    {% if transaction.giver == user.username %}
+                        <p class="card-text">Transaction ID: {{ transaction.id }}</p>
+                        <p class="card-text">Description: {{ transaction.description }}</p>
+                        <p class="card-text">{{ transaction.amount }}</p>
+
+                        <p class="card-text"> You <b>spent</b> ₹{{ transaction.amount }} </p>
+                        <p class="card-text"> You <b>lent</b> ₹{{ transaction.lent }} </p>
+                        <p class="card-text">
+
+                            {% for taker in transaction.takers  %}
+                                {% if taker == user.username %}
+                                    <p>You owe ₹{{ transaction.borrowed }}</p>
+                                {% else %}
+                                    <p>{{ taker }} owes ₹{{ transaction.amount|div:transaction.num_people }}</p>
+                                {% endif %}
+                            {% endfor %} </p>
+                        <a href="deleteTransaction/{{ transaction.id }}" class="btn btn-danger">Delete</a>
+                        <a href="editTransaction/{{ transaction.id }}" class="btn btn-primary">Edit</a>
+                    {% else %}
+                        <p class="card-text">Transaction ID: {{ transaction.id }}</p>
+                        <p class="card-text">{{ transaction.description }}</p>
+                        <p class="card-text">₹{{ transaction.amount }}</p>
+                        <p class="card-text"> {{ transaction.giver }} <b>spent</b> ₹{{ transaction.amount }} </p>
+                        {% for taker in transaction.takers %}
+                            {% if taker == user.username %}
+                                <p class="card-text">You owe ₹{{ transaction.borrowed }}</p>
+                            {% elif taker == transaction.giver %}
+                                <p class="card-text">{{ taker }} owes ₹{{ transaction.amount|div:transaction.num_people }}</p>
+                            {% else %}
+                                <p class="card-text"> {{ taker }} owes ₹{{ transaction.amount|div:transaction.num_people }} </p>
+                            {% endif %}
+                        {% endfor %}
+                        <a href="deleteTransaction/{{ transaction.id }}" class="btn btn-danger">Delete</a>
+                        <a href="editTransaction/{{ transaction.id }}" class="btn btn-primary">Edit</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h2> You are not logged in </h2>
+        <a href="{% url 'login' %}">Log In<br/></a>
+        <a href="{% url 'signup' %}">Register</a>
+    {% endif %}
+{% endblock %}

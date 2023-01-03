@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load mathfilters %}
+
+{% block content %}
+    {% block title %} <h2> Simplified Transactions </h2> {% endblock %}
+    {%  if user.is_authenticated %}
+{#        {% for transaction in transactions %}#}
+            <div class="card">
+                <div class="card-body">
+{#                    <p class="card-text">{{transaction.giver}} </p>#}
+                    <p class="card-text">You Borrowed:</p>
+                    {% for username, money in borrowed_from.items %}
+                        {% if money != 0 %}
+                            <p class="card-text"> ₹{{money|floatformat:2}} from {{ username }}</p>
+                        {% endif %}
+                    {% endfor %}
+
+                    You Lent:
+                    {% for username, money in lent_to.items %}
+                        {% if money != 0 %}
+                            <p class="card-text"> ₹{{money|floatformat:2}} to {{ username }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+{#        {% endfor %}#}
+    {% else %}
+        <h2> You are not logged in </h2>
+        <a href="{% url 'login' %}">Log In<br/></a>
+        <a href="{% url 'signup' %}">Register</a>
+    {% endif %}
+{% endblock %}
