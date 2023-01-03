@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
-
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import date
+
 
 # Create your models here.
 
@@ -38,9 +38,8 @@ class Transaction(models.Model):
                                 choices=category_options,
                                 default='Others',
                                 )
-    def __str__(self):
-        return "giver : " + self.giver.username + " taker : " + [x.username for x in self.taker.all()].__str__() + " amount:  " + str(self.amount) + " description: " + self.description + " date: " + self.date.__str__()
 
-    # def clean(self):
-    #     self.giver = self.giver.capitalize()
-    #     self.taker = self.taker.capitalize()
+    def __str__(self):
+        return "giver : " + self.giver.username + " taker : " + [x.username for x in
+                                                                 self.taker.all()].__str__() + " amount:  " + str(
+            self.amount) + " description: " + self.description + " date: " + self.date.__str__()

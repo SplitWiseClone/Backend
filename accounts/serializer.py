@@ -1,11 +1,13 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
-from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import smart_str, force_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from rest_framework import serializers
+
 from .utils import Util
+
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 
@@ -82,7 +84,7 @@ class SendPasswordResetEmailSerializer(serializers.Serializer):
             token = PasswordResetTokenGenerator().make_token(user)
             link = 'http://localhost:3000/api/user/reset/' + uidb64 + '/' + token
             print('Password reset link', link)
-            Util.send_email(data={'email_body': 'Click Following link to reset your password'+link, 'to_email': user.email, 'email_subject': 'Reset your password'})
+            Util.send_email(data={'email_body': 'Click Following link to reset your password '+link, 'to_email': user.email, 'email_subject': 'Reset your password'})
             return attrs
         else:
             raise serializers.ValidationError({'email': 'Email is not registered'})
